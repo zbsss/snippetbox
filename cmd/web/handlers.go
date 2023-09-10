@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"html/template"
 	"log"
 	"net/http"
 	"strconv"
@@ -13,7 +14,17 @@ func home(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Write([]byte("Hello from Snippetbox"))
+	ts, err := template.ParseFiles("./ui/html/pages/home.html")
+	if err != nil {
+		log.Print(err.Error())
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+	}
+
+	err = ts.Execute(w, nil)
+	if err != nil {
+		log.Print(err.Error())
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+	}
 }
 
 func snippetView(w http.ResponseWriter, r *http.Request) {
@@ -34,17 +45,4 @@ func snippetCreate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Write([]byte("Snippet create"))
-}
-
-func main() {
-	mux := http.NewServeMux()
-
-	mux.HandleFunc("/", home)
-	mux.HandleFunc("/snippet/view", snippetView)
-	mux.HandleFunc("/snippet/create", snippetCreate)
-
-	log.Print("starting server on :4000")
-
-	err := http.ListenAndServe(":4000", mux)
-	log.Fatal(err)
 }
