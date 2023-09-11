@@ -15,6 +15,7 @@ type (
 
 	application struct {
 		logger *slog.Logger
+		cfg    *config
 	}
 )
 
@@ -26,20 +27,12 @@ func main() {
 
 	app := application{
 		logger: slog.New(slog.NewTextHandler(os.Stdout, nil)),
+		cfg:    &cfg,
 	}
-
-	mux := http.NewServeMux()
-	fs := http.FileServer(http.Dir(cfg.staticDir))
-
-	mux.Handle("/static/", http.StripPrefix("/static", fs))
-
-	mux.HandleFunc("/", app.home)
-	mux.HandleFunc("/snippet/view", app.snippetView)
-	mux.HandleFunc("/snippet/create", app.snippetCreate)
 
 	app.logger.Info("starting server", slog.String("addr", cfg.addr))
 
-	err := http.ListenAndServe(cfg.addr, mux)
+	err := http.ListenAndServe(cfg.addr, app.routes())
 	app.logger.Error(err.Error())
 	os.Exit(1)
 }
