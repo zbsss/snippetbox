@@ -2,14 +2,21 @@ package main
 
 import (
 	"flag"
-	"log"
+	"log/slog"
 	"net/http"
+	"os"
 )
 
-type config struct {
-	addr      string
-	staticDir string
-}
+type (
+	config struct {
+		addr      string
+		staticDir string
+	}
+
+	application struct {
+		logger *slog.Logger
+	}
+)
 
 func main() {
 	var cfg config
@@ -17,17 +24,22 @@ func main() {
 	flag.StringVar(&cfg.staticDir, "static-dir", "./ui/static", "Path to static assets")
 	flag.Parse()
 
+	app := application{
+		logger: slog.New(slog.NewTextHandler(os.Stdout, nil)),
+	}
+
 	mux := http.NewServeMux()
 	fs := http.FileServer(http.Dir(cfg.staticDir))
 
 	mux.Handle("/static/", http.StripPrefix("/static", fs))
 
-	mux.HandleFunc("/", home)
-	mux.HandleFunc("/snippet/view", snippetView)
-	mux.HandleFunc("/snippet/create", snippetCreate)
+	mux.HandleFunc("/", app.home)
+	mux.HandleFunc("/snippet/view", app.snippetView)
+	mux.HandleFunc("/snippet/create", app.snippetCreate)
 
-	log.Printf("starting server on %s", cfg.addr)
+	app.logger.Info("starting server", slog.String("addr", cfg.addr))
 
 	err := http.ListenAndServe(cfg.addr, mux)
-	log.Fatal(err)
+	app.logger.Error(err.Error())
+	os.Exit(1)
 }
