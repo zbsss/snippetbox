@@ -8,6 +8,7 @@ import (
 	"os"
 
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/zbsss/snippetbox/internal/models"
 )
 
 type (
@@ -18,8 +19,9 @@ type (
 	}
 
 	application struct {
-		logger *slog.Logger
-		cfg    *config
+		logger   *slog.Logger
+		cfg      *config
+		snippets *models.SnippetModel
 	}
 )
 
@@ -30,17 +32,20 @@ func main() {
 	flag.StringVar(&cfg.dsn, "dsn", "web:pass@/snippetbox?parseTime=true", "MySQL data source name")
 	flag.Parse()
 
-	app := application{
-		logger: slog.New(slog.NewTextHandler(os.Stdout, nil)),
-		cfg:    &cfg,
-	}
+	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
 
 	db, err := openDB(cfg.dsn)
 	if err != nil {
-		app.logger.Error(err.Error())
+		logger.Error(err.Error())
 		os.Exit(1)
 	}
 	defer db.Close()
+
+	app := application{
+		logger:   logger,
+		cfg:      &cfg,
+		snippets: &models.SnippetModel{DB: db},
+	}
 
 	app.logger.Info("starting server", slog.String("addr", cfg.addr))
 
