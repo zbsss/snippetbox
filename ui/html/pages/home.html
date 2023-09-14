@@ -2,5 +2,10 @@
 
 {{ define "main" }}
     <h2>Latest Snippets</h2>
-    <p>There's nothing to see here yet!</p>
+
+    {{ range .Snippets }}
+        <h4>{{ .Title }}</h4>
+        <p>{{ .Content }}</p>
+        <hr />
+    {{ end }}
 {{ end }}

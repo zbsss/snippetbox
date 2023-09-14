@@ -28,9 +28,20 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = ts.ExecuteTemplate(w, "base", nil)
+	snippets, err := app.snippets.Latest()
 	if err != nil {
 		app.serverError(w, r, err)
+		return
+	}
+
+	vars := map[string]any{
+		"Snippets": snippets,
+	}
+
+	err = ts.ExecuteTemplate(w, "base", vars)
+	if err != nil {
+		app.serverError(w, r, err)
+		return
 	}
 }
 
