@@ -15,12 +15,6 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ts, err := app.tmplCache.Get("home.html")
-	if err != nil {
-		app.serverError(w, r, err)
-		return
-	}
-
 	snippets, err := app.snippets.Latest()
 	if err != nil {
 		app.serverError(w, r, err)
@@ -31,11 +25,7 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 		Snippets: snippets,
 	}
 
-	err = ts.ExecuteTemplate(w, "base", data)
-	if err != nil {
-		app.serverError(w, r, err)
-		return
-	}
+	app.render(w, r, 200, "home.html", data)
 }
 
 func (app *application) snippetView(w http.ResponseWriter, r *http.Request) {
@@ -56,21 +46,11 @@ func (app *application) snippetView(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ts, err := app.tmplCache.Get("view.html")
-	if err != nil {
-		app.serverError(w, r, err)
-		return
-	}
-
 	data := templateData{
 		Snippet: snippet,
 	}
 
-	err = ts.ExecuteTemplate(w, "base", data)
-	if err != nil {
-		app.serverError(w, r, err)
-		return
-	}
+	app.render(w, r, 200, "view.html", data)
 }
 
 func (app *application) snippetCreate(w http.ResponseWriter, r *http.Request) {
