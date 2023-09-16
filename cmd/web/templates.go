@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"html/template"
 	"path/filepath"
+	"time"
 
 	"github.com/zbsss/snippetbox/internal/models"
 )
@@ -16,6 +17,14 @@ type templateData struct {
 
 type templateCache struct {
 	cache map[string]*template.Template
+}
+
+func humanDate(t time.Time) string {
+	return t.Format("02 Jan 2023 at 15:04")
+}
+
+var funcs = template.FuncMap{
+	"humanDate": humanDate,
 }
 
 func (tc *templateCache) Get(templateName string) (*template.Template, error) {
@@ -40,7 +49,7 @@ func newTemplateCache() (*templateCache, error) {
 	for _, page := range pages {
 		name := filepath.Base(page)
 
-		ts, err := template.ParseFiles("./ui/html/base.html")
+		ts, err := template.New(name).Funcs(funcs).ParseFiles("./ui/html/base.html")
 		if err != nil {
 			return nil, err
 		}
