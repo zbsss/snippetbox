@@ -19,9 +19,10 @@ type (
 	}
 
 	application struct {
-		logger   *slog.Logger
-		cfg      *config
-		snippets *models.SnippetModel
+		logger    *slog.Logger
+		cfg       *config
+		snippets  *models.SnippetModel
+		tmplCache *templateCache
 	}
 )
 
@@ -41,10 +42,17 @@ func main() {
 	}
 	defer db.Close()
 
+	tmplCache, err := newTemplateCache()
+	if err != nil {
+		logger.Error(err.Error())
+		os.Exit(1)
+	}
+
 	app := application{
-		logger:   logger,
-		cfg:      &cfg,
-		snippets: &models.SnippetModel{DB: db},
+		logger:    logger,
+		cfg:       &cfg,
+		snippets:  &models.SnippetModel{DB: db},
+		tmplCache: tmplCache,
 	}
 
 	app.logger.Info("starting server", slog.String("addr", cfg.addr))
