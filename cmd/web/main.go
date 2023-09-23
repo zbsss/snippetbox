@@ -3,12 +3,13 @@ package main
 import (
 	"database/sql"
 	"flag"
-	"github.com/alexedwards/scs/mysqlstore"
-	"github.com/alexedwards/scs/v2"
 	"log/slog"
 	"net/http"
 	"os"
 	"time"
+
+	"github.com/alexedwards/scs/mysqlstore"
+	"github.com/alexedwards/scs/v2"
 
 	"github.com/go-playground/form/v4"
 	_ "github.com/go-sql-driver/mysql"
@@ -67,9 +68,15 @@ func main() {
 		sessionManager: sessionManager,
 	}
 
+	srv := &http.Server{
+		Addr:     cfg.addr,
+		Handler:  app.routes(),
+		ErrorLog: slog.NewLogLogger(logger.Handler(), slog.LevelError),
+	}
+
 	app.logger.Info("starting server", slog.String("addr", cfg.addr))
 
-	err = http.ListenAndServe(cfg.addr, app.routes())
+	err = srv.ListenAndServe()
 	app.logger.Error(err.Error())
 	os.Exit(1)
 }
