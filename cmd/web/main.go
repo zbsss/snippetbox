@@ -74,10 +74,13 @@ func main() {
 	}
 
 	srv := &http.Server{
-		Addr:      cfg.addr,
-		Handler:   app.routes(),
-		ErrorLog:  slog.NewLogLogger(logger.Handler(), slog.LevelError),
-		TLSConfig: tlsCfg,
+		Addr:         cfg.addr,
+		Handler:      app.routes(),
+		ErrorLog:     slog.NewLogLogger(logger.Handler(), slog.LevelError),
+		TLSConfig:    tlsCfg,
+		IdleTimeout:  1 * time.Minute,
+		ReadTimeout:  5 * time.Second,
+		WriteTimeout: 10 * time.Second,
 	}
 
 	app.logger.Info("starting server", slog.String("addr", cfg.addr))
