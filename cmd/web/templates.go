@@ -14,6 +14,7 @@ type templateData struct {
 	Snippet     models.Snippet
 	Snippets    []models.Snippet
 	Form        any
+	Toast       string
 }
 
 type templateCache struct {

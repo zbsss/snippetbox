@@ -20,6 +20,9 @@
   </header>
   {{ template "nav" . }}
   <main>
+    {{ with .Toast }}
+      <div class="toast">{{.}}</div>
+    {{end}}
     {{ template "main" . }}
   </main>
   <footer>Powered by <a href='https://golang.org/'>Go</a> in {{ .CurrentYear }}</footer>
