@@ -28,6 +28,7 @@ type (
 		logger         *slog.Logger
 		cfg            *config
 		snippets       *models.SnippetModel
+		users          *models.UserModel
 		tmplCache      *templateCache
 		formDecoder    *form.Decoder
 		sessionManager *scs.SessionManager
@@ -64,6 +65,7 @@ func main() {
 		logger:         logger,
 		cfg:            &cfg,
 		snippets:       &models.SnippetModel{DB: db},
+		users:          &models.UserModel{DB: db},
 		tmplCache:      tmplCache,
 		formDecoder:    form.NewDecoder(),
 		sessionManager: sessionManager,
