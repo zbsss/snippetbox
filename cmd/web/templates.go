@@ -10,11 +10,12 @@ import (
 )
 
 type templateData struct {
-	CurrentYear int
-	Snippet     models.Snippet
-	Snippets    []models.Snippet
-	Form        any
-	Toast       string
+	CurrentYear     int
+	Snippet         models.Snippet
+	Snippets        []models.Snippet
+	Form            any
+	Toast           string
+	IsAuthenticated bool
 }
 
 type templateCache struct {
