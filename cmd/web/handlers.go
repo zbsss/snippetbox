@@ -101,12 +101,53 @@ func (app *application) snippetCreatePost(w http.ResponseWriter, r *http.Request
 	http.Redirect(w, r, fmt.Sprintf("/snippet/view/%d", id), http.StatusSeeOther)
 }
 
+type userSignupForm struct {
+	Name                string `form:"name"`
+	Email               string `form:"email"`
+	Password            string `form:"password"`
+	validator.Validator `form:"-"`
+}
+
 func (app *application) userSignup(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Unimplemented"))
+	data := app.newTemplateData(r)
+	data.Form = userSignupForm{}
+	app.render(w, r, 200, "signup.html", data)
 }
 
 func (app *application) userSignupPost(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Unimplemented"))
+	var form userSignupForm
+
+	err := app.decodePostForm(r, &form)
+	if err != nil {
+		app.clientError(w, http.StatusBadRequest)
+		return
+	}
+
+	form.CheckField(validator.NotBlank(form.Name), "name", "name cannot be empty")
+	form.CheckField(validator.NotBlank(form.Email), "email", "email cannot be empty")
+	form.CheckField(validator.Matches(form.Email, validator.EmailRX), "email", "this field must be a valid email address")
+	form.CheckField(validator.NotBlank(form.Password), "password", "password cannot be empty")
+	form.CheckField(validator.MinChars(form.Password, 8), "password", "password must be at least 8 characters long")
+
+	if !form.Valid() {
+		data := app.newTemplateData(r)
+		data.Form = form
+		app.render(w, r, http.StatusUnprocessableEntity, "signup.html", data)
+		return
+	}
+
+	err = app.users.Insert(form.Name, form.Email, form.Password)
+	if err != nil {
+		if errors.Is(err, models.ErrDuplicateEmail) {
+			app.clientError(w, http.StatusBadRequest)
+			return
+		}
+
+		app.serverError(w, r, err)
+		return
+	}
+
+	http.Redirect(w, r, "/user/login", http.StatusSeeOther)
 }
 
 func (app *application) userLogin(w http.ResponseWriter, r *http.Request) {
