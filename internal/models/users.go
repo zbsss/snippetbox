@@ -11,7 +11,7 @@ import (
 )
 
 type User struct {
-	ID             string
+	ID             int
 	Name           string
 	Email          string
 	HashedPassword []byte
@@ -46,14 +46,26 @@ func (m *UserModel) Insert(name, email, password string) error {
 }
 
 func (m *UserModel) Authenticate(email, password string) (int, error) {
-	hash := []byte("ala ma kota")
+	query := `SELECT id, hashed_password FROM users WHERE email = ?`
 
-	err := bcrypt.CompareHashAndPassword(hash, []byte(password))
+	var user User
+	err := m.DB.QueryRow(query, email).Scan(&user.ID, &user.HashedPassword)
 	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return 0, ErrInvalidCredentials
+		}
 		return 0, err
 	}
 
-	return 0, nil
+	err = bcrypt.CompareHashAndPassword(user.HashedPassword, []byte(password))
+	if err != nil {
+		if errors.Is(err, bcrypt.ErrMismatchedHashAndPassword) {
+			return 0, ErrInvalidCredentials
+		}
+		return 0, err
+	}
+
+	return user.ID, nil
 }
 
 func (m *UserModel) Exists(id int) (bool, error) {
