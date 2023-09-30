@@ -16,6 +16,7 @@ type templateData struct {
 	Form            any
 	Toast           string
 	IsAuthenticated bool
+	CSRFToken       string
 }
 
 type templateCache struct {
