@@ -3,10 +3,12 @@ package main
 import (
 	"fmt"
 	"html/template"
+	"io/fs"
 	"path/filepath"
 	"time"
 
 	"github.com/zbsss/snippetbox/internal/models"
+	"github.com/zbsss/snippetbox/ui"
 )
 
 type templateData struct {
@@ -45,7 +47,7 @@ func newTemplateCache() (*templateCache, error) {
 		cache: make(map[string]*template.Template),
 	}
 
-	pages, err := filepath.Glob("./ui/html/pages/*.html")
+	pages, err := fs.Glob(ui.Files, "html/pages/*.html")
 	if err != nil {
 		return nil, err
 	}
@@ -53,17 +55,13 @@ func newTemplateCache() (*templateCache, error) {
 	for _, page := range pages {
 		name := filepath.Base(page)
 
-		ts, err := template.New(name).Funcs(funcs).ParseFiles("./ui/html/base.html")
-		if err != nil {
-			return nil, err
+		patterns := []string{
+			"html/base.html",
+			"html/fragments/*.html",
+			page,
 		}
 
-		ts, err = ts.ParseGlob("./ui/html/fragments/*.html")
-		if err != nil {
-			return nil, err
-		}
-
-		ts, err = ts.ParseFiles(page)
+		ts, err := template.New(name).Funcs(funcs).ParseFS(ui.Files, patterns...)
 		if err != nil {
 			return nil, err
 		}
