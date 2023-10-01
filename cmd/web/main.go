@@ -27,8 +27,8 @@ type (
 	application struct {
 		logger         *slog.Logger
 		cfg            *config
-		snippets       *models.SnippetModel
-		users          *models.UserModel
+		snippets       models.SnippetModel
+		users          models.UserModel
 		tmplCache      *templateCache
 		formDecoder    *form.Decoder
 		sessionManager *scs.SessionManager
@@ -64,8 +64,8 @@ func main() {
 	app := application{
 		logger:         logger,
 		cfg:            &cfg,
-		snippets:       &models.SnippetModel{DB: db},
-		users:          &models.UserModel{DB: db},
+		snippets:       models.NewSnippetModel(db),
+		users:          models.NewUserModel(db),
 		tmplCache:      tmplCache,
 		formDecoder:    form.NewDecoder(),
 		sessionManager: sessionManager,

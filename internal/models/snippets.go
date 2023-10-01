@@ -14,11 +14,21 @@ type Snippet struct {
 	Expires time.Time
 }
 
-type SnippetModel struct {
+type snippetModel struct {
 	DB *sql.DB
 }
 
-func (m *SnippetModel) Insert(title string, content string, expires int) (int, error) {
+type SnippetModel interface {
+	Insert(title string, content string, expires int) (int, error)
+	Get(id int) (Snippet, error)
+	Latest() ([]Snippet, error)
+}
+
+func NewSnippetModel(db *sql.DB) SnippetModel {
+	return &snippetModel{DB: db}
+}
+
+func (m *snippetModel) Insert(title string, content string, expires int) (int, error) {
 	// TODO: there is a bug here, 4 columns but 5 values
 	stmt := `INSERT INTO snippets (title, content, created, expires) 
 	VALUES(?, ?, UTC_TIMESTAMP(), DATE_ADD(UTC_TIMESTAMP(), INTERVAL ? DAY))`
@@ -36,7 +46,7 @@ func (m *SnippetModel) Insert(title string, content string, expires int) (int, e
 	return int(id), nil
 }
 
-func (m *SnippetModel) Get(id int) (Snippet, error) {
+func (m *snippetModel) Get(id int) (Snippet, error) {
 	query := `SELECT id, title, content, created, expires 
 	FROM snippets WHERE id = ? AND expires > UTC_TIMESTAMP();`
 
@@ -52,7 +62,7 @@ func (m *SnippetModel) Get(id int) (Snippet, error) {
 	return s, nil
 }
 
-func (m *SnippetModel) Latest() ([]Snippet, error) {
+func (m *snippetModel) Latest() ([]Snippet, error) {
 	query := `SELECT id, title, content, created, expires 
 	FROM snippets WHERE expires > UTC_TIMESTAMP()
 	ORDER BY created DESC
