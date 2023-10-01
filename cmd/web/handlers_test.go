@@ -3,7 +3,6 @@ package main
 import (
 	"bytes"
 	"io"
-	"log"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -155,8 +154,6 @@ func TestUserSignupPost(t *testing.T) {
 
 	validCSRFToken := extractCSRFToken(t, body)
 
-	log.Println(validCSRFToken)
-
 	const (
 		validName     = "Bob"
 		validPassword = "validPa$$word"
@@ -196,6 +193,7 @@ func TestUserSignupPost(t *testing.T) {
 			userPassword: validPassword,
 			csrfToken:    validCSRFToken,
 			wantCode:     http.StatusUnprocessableEntity,
+			wantFormTag:  formTag,
 		},
 		{
 			name:         "Empty email",
@@ -204,6 +202,7 @@ func TestUserSignupPost(t *testing.T) {
 			userPassword: validPassword,
 			csrfToken:    validCSRFToken,
 			wantCode:     http.StatusUnprocessableEntity,
+			wantFormTag:  formTag,
 		},
 		{
 			name:         "Empty password",
@@ -212,6 +211,7 @@ func TestUserSignupPost(t *testing.T) {
 			userPassword: "",
 			csrfToken:    validCSRFToken,
 			wantCode:     http.StatusUnprocessableEntity,
+			wantFormTag:  formTag,
 		},
 		{
 			name:         "Invalid email",
@@ -220,6 +220,7 @@ func TestUserSignupPost(t *testing.T) {
 			userPassword: validPassword,
 			csrfToken:    validCSRFToken,
 			wantCode:     http.StatusUnprocessableEntity,
+			wantFormTag:  formTag,
 		},
 		{
 			name:         "Duplicate email",
@@ -228,6 +229,7 @@ func TestUserSignupPost(t *testing.T) {
 			userPassword: validPassword,
 			csrfToken:    validCSRFToken,
 			wantCode:     http.StatusUnprocessableEntity,
+			wantFormTag:  formTag,
 		},
 		{
 			name:         "Short password",
@@ -236,6 +238,7 @@ func TestUserSignupPost(t *testing.T) {
 			userPassword: "pass",
 			csrfToken:    validCSRFToken,
 			wantCode:     http.StatusUnprocessableEntity,
+			wantFormTag:  formTag,
 		},
 	}
 
@@ -249,10 +252,11 @@ func TestUserSignupPost(t *testing.T) {
 
 			code, _, body := ts.postForm(t, "/user/signup", form)
 
-			log.Println(body)
-
 			assert.Equal(t, code, tt.wantCode)
 
+			if tt.wantFormTag != "" {
+				assert.StringContains(t, body, tt.wantFormTag)
+			}
 		})
 	}
 }
