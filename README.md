@@ -1,4 +1,4 @@
-## Starting dev environment
+# Starting dev environment
 1. Build Docker image
 ```bash
 docker build -t zbsss/snippetbox:0.1.4  -f deploy/docker/snippetbox/Dockerfile .
@@ -37,4 +37,13 @@ helm dependency build
 helm upgrade --install  snippetbox-chart . --values values.yaml --values environments/dev.values.yaml
 ```
 
-8. Open browser at https://localhost/user/login
+8. (Optional) Test Helm release
+```bash
+helm test snippetbox-chart
+```
+
+9. Open browser at https://localhost/user/login
+
+# TODOs
+- [ ] Create scripts for database migrations
+- [ ] Create Github Actions to run unit tests, build and publish Docker image

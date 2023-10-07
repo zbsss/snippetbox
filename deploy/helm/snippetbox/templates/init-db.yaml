@@ -1,0 +1,45 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: snippetbox-mysql-initdb
+data:
+  backup.sql: |
+    --
+    -- Table structure for table `sessions`
+    --
+    DROP TABLE IF EXISTS `sessions`;
+    CREATE TABLE `sessions` (
+      `token` char(43) NOT NULL,
+      `data` blob NOT NULL,
+      `expiry` timestamp(6) NOT NULL,
+      PRIMARY KEY (`token`),
+      KEY `session_expiry_idx` (`expiry`)
+    );
+
+    --
+    -- Table structure for table `snippets`
+    --
+    DROP TABLE IF EXISTS `snippets`;
+    CREATE TABLE `snippets` (
+      `id` int NOT NULL AUTO_INCREMENT,
+      `title` varchar(100) NOT NULL,
+      `content` text NOT NULL,
+      `created` datetime NOT NULL,
+      `expires` datetime NOT NULL,
+      PRIMARY KEY (`id`),
+      KEY `idx_snippets_created` (`created`)
+    );
+
+    --
+    -- Table structure for table `users`
+    --
+    DROP TABLE IF EXISTS `users`;
+    CREATE TABLE `users` (
+      `id` int NOT NULL AUTO_INCREMENT,
+      `name` varchar(255) NOT NULL,
+      `email` varchar(255) NOT NULL,
+      `hashed_password` char(60) NOT NULL,
+      `created` datetime NOT NULL,
+      PRIMARY KEY (`id`),
+      UNIQUE KEY `users_uc_email` (`email`)
+    );

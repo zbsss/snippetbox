@@ -1,3 +1,4 @@
+# Nginx Ingress Controller configuration that works with KinD
 ingress-nginx:
   controller:
     hostPort:
@@ -26,3 +27,4 @@ mysql:
     rootPassword: root
     username: web
     password: pass
+  initdbScriptsConfigMap: snippetbox-mysql-initdb
