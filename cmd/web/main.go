@@ -27,6 +27,7 @@ type (
 	application struct {
 		logger         *slog.Logger
 		cfg            *config
+		db             *sql.DB
 		snippets       models.SnippetModel
 		users          models.UserModel
 		tmplCache      *templateCache
@@ -64,6 +65,7 @@ func main() {
 	app := application{
 		logger:         logger,
 		cfg:            &cfg,
+		db:             db,
 		snippets:       models.NewSnippetModel(db),
 		users:          models.NewUserModel(db),
 		tmplCache:      tmplCache,
@@ -87,7 +89,7 @@ func main() {
 
 	app.logger.Info("starting server", slog.String("addr", cfg.addr))
 
-	err = srv.ListenAndServeTLS("./tls/cert.pem", "./tls/key.pem")
+	err = srv.ListenAndServe()
 	app.logger.Error(err.Error())
 	os.Exit(1)
 }
