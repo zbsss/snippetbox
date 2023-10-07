@@ -35,6 +35,6 @@ helm dependency build
 7. Install helm chart
 ```bash
 helm upgrade --install  snippetbox-chart . --values values.yaml --values environments/dev.values.yaml
-``
+```
 
 8. Open browser at https://localhost/user/login
