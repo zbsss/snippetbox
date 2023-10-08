@@ -65,7 +65,7 @@ jobs:
 
       - name: Capture Logs with Stern
         run: |
-          stern -l  app.kubernetes.io/name=snippetbox -t &
+          stern -l  app.kubernetes.io/instance=snippetbox-chart -t &
           STERN_PID=$!
           sleep 300
           kill $STERN_PID
@@ -79,3 +79,8 @@ jobs:
           helm test snippetbox-chart
 
           echo "Helm tests passed!"
+      - name: Test http://localhost response
+        run: |
+          set -euo pipefail
+
+          curl -v --insecure -s https://localhost
