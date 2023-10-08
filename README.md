@@ -46,4 +46,10 @@ helm test snippetbox-chart
 
 # TODOs
 - [ ] Create scripts for database migrations
-- [ ] Create Github Actions to run unit tests, build and publish Docker image
+- [ ] Clean up Github Actions
+  - [ ] remove sleep, instead wait for pods to be running
+  - [ ] add integration tests that make requests to localhost
+    - [ ] signup
+    - [ ] login
+    - [ ] create snippet
+    - [ ] view snippet
