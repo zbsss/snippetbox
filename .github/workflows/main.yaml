@@ -36,8 +36,8 @@ jobs:
 
       - name: Install Stern
         run: |
-          wget https://github.com/stern/stern/releases/download/v1.26.0/stern_1.26.0_darwin_amd64.tar.gz
-          tar -xzf stern_1.26.0_darwin_amd64.tar.gz
+          wget https://github.com/stern/stern/releases/download/v1.26.0/stern_1.26.0_linux_amd64.tar.gz
+          tar -xzf stern_1.26.0_linux_amd64.tar.gz
           chmod +x stern
           sudo mv stern /usr/local/bin/
 
