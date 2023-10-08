@@ -43,6 +43,8 @@ jobs:
 
       - name: Create kind cluster
         uses: helm/kind-action@v1.7.0
+        with:
+          config: infra/terraform/dev/kind-config.yaml
 
       - name: Install Helm chart
         run: |
@@ -74,6 +76,8 @@ jobs:
           set -euo pipefail
 
           kubectl get po -A
+          kubectl get svc -A
+          kubectl get ingress -A
 
           cd deploy/helm/snippetbox
           helm test snippetbox-chart
