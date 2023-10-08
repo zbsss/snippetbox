@@ -41,6 +41,9 @@ jobs:
         run: |
           cd deploy/helm/snippetbox
 
+          helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+          helm repo update
+
           helm dependency build
           helm install  snippetbox-chart . \
             --wait --timeout 600s
