@@ -39,10 +39,13 @@ jobs:
 
       - name: Install Helm chart
         run: |
-          helm install  snippetbox-chart deploy/helm/snippetbox \
+          cd deploy/helm/snippetbox
+
+          helm dependency build
+          helm install  snippetbox-chart . \
             --wait --timeout 600s
-            --values deploy/helm/snippetbox/values.yaml \
-            --values deploy/helm/snippetbox/environments/dev.values.yaml \
+            --values values.yaml \
+            --values environments/dev.values.yaml \
             --set "tls.crt=${{ secrets.TEST_TLS_CRT }}" \
             --set "tls.key=${{ secrets.TEST_TLS_KEY }}"
             --set "image.tag=${{ github.sha }}"
