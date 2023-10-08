@@ -44,3 +44,4 @@ jobs:
             --values environments/dev.values.yaml \
             --set tls.crt=${{ secrets.TEST_TLS_CRT }} \
             --set tls.key=${{ secrets.TEST_TLS_KEY }}
+            --set image.tag=${{ github.sha }}
