@@ -65,11 +65,12 @@ jobs:
 
           echo "Helm chart installed successfully!"
 
-      - name: Capture Logs with Stern
+      - name: Wait for pods to be ready
         run: |
           stern -l  app.kubernetes.io/instance=snippetbox-chart -t &
           STERN_PID=$!
-          sleep 300
+          
+          kubectl wait --for=condition=Ready pods -l app.kubernetes.io/instance=snippetbox-chart --timeout=300s
           kill $STERN_PID
       - name: Helm test
         run: |
