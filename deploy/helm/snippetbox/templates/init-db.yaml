@@ -7,8 +7,7 @@ data:
     --
     -- Table structure for table `sessions`
     --
-    DROP TABLE IF EXISTS `sessions`;
-    CREATE TABLE `sessions` (
+    CREATE TABLE IF NOT EXISTS `sessions` (
       `token` char(43) NOT NULL,
       `data` blob NOT NULL,
       `expiry` timestamp(6) NOT NULL,
@@ -19,8 +18,7 @@ data:
     --
     -- Table structure for table `snippets`
     --
-    DROP TABLE IF EXISTS `snippets`;
-    CREATE TABLE `snippets` (
+    CREATE TABLE IF NOT EXISTS `snippets` (
       `id` int NOT NULL AUTO_INCREMENT,
       `title` varchar(100) NOT NULL,
       `content` text NOT NULL,
@@ -33,8 +31,7 @@ data:
     --
     -- Table structure for table `users`
     --
-    DROP TABLE IF EXISTS `users`;
-    CREATE TABLE `users` (
+    CREATE TABLE IF NOT EXISTS `users` (
       `id` int NOT NULL AUTO_INCREMENT,
       `name` varchar(255) NOT NULL,
       `email` varchar(255) NOT NULL,
