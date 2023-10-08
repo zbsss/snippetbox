@@ -45,12 +45,23 @@ jobs:
 
           helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
           helm repo update
-
           helm dependency build
+
           helm install  snippetbox-chart . \
-            --wait --timeout 600s \
+            # --wait --timeout 600s \
             --values values.yaml \
             --values environments/dev.values.yaml \
             --set "tls.crt=${{ secrets.TEST_TLS_CRT }}" \
             --set "tls.key=${{ secrets.TEST_TLS_KEY }}" \
             --set "image.tag=${{ github.sha }}"
+
+          echo "Helm chart installed successfully!"
+      - name: Helm test
+        run: |
+          set -euo pipefail
+
+          cd deploy/helm/snippetbox
+
+          helm test snippetbox-chart
+
+          echo "Helm tests passed!"
