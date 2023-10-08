@@ -28,3 +28,19 @@ jobs:
 
       - name: Release and deploy with Dagger
         run: dagger run go run ci/dagger/main.go --image-tag=${{ github.sha }}
+
+      - name: Create kind cluster
+        uses: helm/kind-action@v1.7.0
+
+      - name: Set up Helm
+        uses: helm/actions/setup@v1
+        with:
+          version: v3.12.2
+
+      - name: Install Helm chart
+        run: |
+          helm install  snippetbox-chart . \
+            --values values.yaml \
+            --values environments/dev.values.yaml \
+            --set tls.crt=${{ secrets.TEST_TLS_CRT }} \
+            --set tls.key=${{ secrets.TEST_TLS_KEY }}
