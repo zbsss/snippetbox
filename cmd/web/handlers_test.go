@@ -19,7 +19,7 @@ func TestPing(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	ping(rr, r)
+	health(rr, r)
 
 	rs := rr.Result()
 

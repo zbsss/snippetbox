@@ -227,16 +227,6 @@ func (app *application) userLogoutPost(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
-func ping(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("OK"))
-}
-
-func (app *application) health(w http.ResponseWriter, r *http.Request) {
-	err := app.db.Ping()
-	if err != nil {
-		app.serverError(w, r, err)
-		return
-	}
-
+func health(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("OK"))
 }
