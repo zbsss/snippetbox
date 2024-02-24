@@ -56,10 +56,6 @@ spec:
               protocol: TCP
           livenessProbe:
             httpGet:
-              path: /ping
-              port: 4000
-          readinessProbe:
-            httpGet:
               path: /healthz
               port: 4000
           resources:
