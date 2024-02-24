@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"flag"
+	"fmt"
 	"log/slog"
 	"net/http"
 	"os"
@@ -35,12 +36,23 @@ type (
 	}
 )
 
+// TODO: refactor
+func dsn() string {
+	host := os.Getenv("HOST")
+	db := os.Getenv("MYSQL_DATABASE")
+	user := os.Getenv("MYSQL_USER")
+	password := os.Getenv("MYSQL_PASSWORD")
+
+	return fmt.Sprintf("%s:%s@tcp(%s-mysql:3306)/%s?parseTime=true", user, password, host, db)
+}
+
 func main() {
 	var cfg config
 	flag.StringVar(&cfg.addr, "addr", ":4000", "HTTP network address")
 	flag.StringVar(&cfg.staticDir, "static-dir", "./ui/static", "Path to static assets")
-	flag.StringVar(&cfg.dsn, "dsn", "web:pass@/snippetbox?parseTime=true", "MySQL data source name")
 	flag.Parse()
+
+	cfg.dsn = dsn()
 
 	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
 

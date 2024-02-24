@@ -34,9 +34,22 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           command: ["/app/snippetbox"]
-          args:
-            - "--dsn"
-            - "{{ .Values.mysql.auth.username }}:{{ .Values.mysql.auth.password }}@tcp({{ include "snippetbox.fullname" . }}-mysql:3306)/{{ .Values.mysql.auth.database }}?parseTime=true"
+          env:
+          - name: HOST
+            value: {{ include "snippetbox.fullname" . }}
+          - name: MYSQL_DATABASE
+            value: {{ .Values.mysql.auth.database }}
+          - name: MYSQL_USER
+            value: {{ .Values.mysql.auth.username }}
+          - name: MYSQL_PASSWORD
+            {{ if .Values.mysql.auth.password }}
+            value: {{ .Values.mysql.auth.password }}
+            {{ else }}
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.mysql.auth.existingSecret }}
+                key: mysql-password
+            {{ end }}
           ports:
             - name: http
               containerPort: {{ .Values.service.port }}

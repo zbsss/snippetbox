@@ -4,5 +4,6 @@ mysql:
       enabled: true
   auth:
     database: snippetbox
+    username: web
     existingSecret: snippetbox-mysql
   initdbScriptsConfigMap: snippetbox-mysql-initdb
