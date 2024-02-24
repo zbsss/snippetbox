@@ -4,6 +4,9 @@ on:
   push:
     branches:
     - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
   dagger:
@@ -50,18 +53,23 @@ jobs:
         run: |
           set -euo pipefail
 
-          cd deploy/helm/snippetbox
-
           helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
           helm repo update
+
+          cd deploy/helm/ingress-controller
+          helm dependency build
+          helm install ingress-controller . \
+            -f values.yaml \
+            --wait --timeout 10m
+
+          cd ../snippetbox
           helm dependency build
 
-          helm install  snippetbox-chart . \
-            --values values.yaml \
-            --values environments/dev.values.yaml \
-            --set "tls.crt=${{ secrets.TEST_TLS_CRT }}" \
-            --set "tls.key=${{ secrets.TEST_TLS_KEY }}" \
-            --set "image.tag=${{ github.sha }}"
+          helm install snippetbox-chart . \
+            -f values.yaml \
+            -f environments/dev.values.yaml \
+            --set "image.tag=${{ github.sha }}" \
+            --wait --timeout 10m
 
           echo "Helm chart installed successfully!"
 
