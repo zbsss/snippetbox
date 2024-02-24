@@ -68,8 +68,7 @@ jobs:
           helm install snippetbox-chart . \
             -f values.yaml \
             -f environments/dev.values.yaml \
-            --set "image.tag=${{ github.sha }}" \
-            --wait --timeout 10m
+            --set "image.tag=${{ github.sha }}"
 
           echo "Helm chart installed successfully!"
 
