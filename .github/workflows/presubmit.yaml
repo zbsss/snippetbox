@@ -1,15 +1,12 @@
 name: 'ci'
 
 on:
-  push:
-    branches:
-    - main
   pull_request:
     branches:
       - main
 
 jobs:
-  dagger:
+  presubmit:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

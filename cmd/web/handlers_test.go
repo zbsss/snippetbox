@@ -11,7 +11,7 @@ import (
 	"github.com/zbsss/snippetbox/internal/assert"
 )
 
-func TestPing(t *testing.T) {
+func TestHealth(t *testing.T) {
 	rr := httptest.NewRecorder()
 
 	r, err := http.NewRequest(http.MethodGet, "/", nil)
@@ -75,13 +75,13 @@ func TestSecureHeaders(t *testing.T) {
 	assert.Equal(t, string(body), "OK")
 }
 
-func TestPingE2E(t *testing.T) {
+func TestHealthE2E(t *testing.T) {
 	app := newTestApplication(t)
 
 	ts := newTestServer(t, app.routes())
 	defer ts.Close()
 
-	code, _, body := ts.get(t, "/ping")
+	code, _, body := ts.get(t, "/healthz")
 
 	assert.Equal(t, code, http.StatusOK)
 	assert.Equal(t, body, "OK")
