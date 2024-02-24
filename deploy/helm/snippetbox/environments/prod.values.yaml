@@ -1,0 +1,8 @@
+mysql:
+  metrics:
+    serviceMonitor:
+      enabled: true
+  auth:
+    database: snippetbox
+    existingSecret: snippetbox-mysql
+  initdbScriptsConfigMap: snippetbox-mysql-initdb

@@ -41,19 +41,7 @@ service:
   port: 80
 
 ingress:
-  enabled: true
-  className: "nginx"
-  annotations:
-    kubernetes.io/tls-acme: "true"
-  hosts:
-    - host: localhost
-      paths:
-        - path: /
-          pathType: Prefix
-  tls:
-   - secretName: snippetbox-tls-secret
-     hosts:
-       - localhost
+  enabled: false
 
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
@@ -79,10 +67,5 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
-
-tls:
-  crtFile: "tls/cert.pem"
-  keyFile: "tls/key.pem"
-
 
 
